@@ -1,1 +1,1 @@
-https://dataviz-exercises-premmaddoju-xcc6pq9nllq74qcx7cfrvb.streamlit.app/
+https://dataviz-exercises-premmaddoju-ttiv8nphnmdgjxx7p22vpj.streamlit.app/
