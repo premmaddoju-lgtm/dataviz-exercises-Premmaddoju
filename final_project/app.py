@@ -2,13 +2,22 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+from pathlib import Path
 
 # Config
 st.set_page_config(page_title="Video Game Industry Trends", layout="wide")
 
 @st.cache_data
 def load_data():
-    df = pd.read_csv('data/Video_Games_Sales_as_at_22_Dec_2016.csv')
+    # Dynamically find the folder where app.py is located
+    BASE_DIR = Path(__file__).resolve().parent
+    DATA_PATH = BASE_DIR / "data" / "Video_Games_Sales_as_at_22_Dec_2016.csv"
+    
+    # Check fallback if data is placed in the root directory
+    if not DATA_PATH.exists():
+        DATA_PATH = BASE_DIR.parent / "data" / "Video_Games_Sales_as_at_22_Dec_2016.csv"
+
+    df = pd.read_csv(DATA_PATH)
     df['Year_of_Release'] = pd.to_numeric(df['Year_of_Release'], errors='coerce')
     df['User_Score'] = pd.to_numeric(df['User_Score'], errors='coerce')
     df = df.dropna(subset=['Year_of_Release', 'Genre', 'Publisher', 'Global_Sales'])
@@ -23,7 +32,7 @@ st.markdown("An interactive analysis of global video game sales, platforms, and 
 # Sidebar Filters
 st.sidebar.header("Filter Visuals")
 year_range = st.sidebar.slider("Select Year Range", int(df['Year_of_Release'].min()), int(df['Year_of_Release'].max()), (1995, 2016))
-selected_genres = st.sidebar.multiselect("Select Genres", options=df['Genre'].unique(), default=df['Genre'].unique()[:5])
+selected_genres = st.sidebar.multiselect("Select Genres", options=list(df['Genre'].unique()), default=list(df['Genre'].unique())[:5])
 
 # Filtered Data
 filtered_df = df[(df['Year_of_Release'] >= year_range[0]) & 
